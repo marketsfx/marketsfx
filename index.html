@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MARKET FX</title>
+  <style>
+    /* ESTILOS GERAIS (mantidos iguais) */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f8;
+      color: #333;
+    }
+
+    /* BARRA SUPERIOR */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .top-bar h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    
+    /* SELECTOR DE IDIOMA ESTILO EMOJI */
+    .language-selector {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .language-emoji {
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+    
+    .language-emoji:hover {
+      background-color: rgba(255,255,255,0.2);
+      transform: scale(1.1);
+    }
+    
+    .language-options {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: white;
+      min-width: 120px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    
+    .language-options a {
+      color: #333;
+      padding: 10px 15px;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    
+    .language-options a:hover {
+      background-color: #f1f1f1;
+    }
+    
+    .show {
+      display: block;
+    }
+
+    /* PÁGINA DE LOGIN/CADASTRO */
+    .login-page {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding-top: 60px;
+    }
+    
+    .container {
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      border-radius: 8px;
+    }
+    
+    .tabs {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    
+    .tabs button {
+      padding: 10px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      width: 48%;
+    }
+    
+    .tabs button.active {
+      background-color: #0056b3;
+    }
+    
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #218838;
+    }
+    
+    .message {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 16px;
+      color: #dc3545;
+    }
+    
+    .success-message {
+      color: #28a745;
+    }
+    
+    .link {
+      text-align: center;
+      margin-top: 10px;
+    }
+    
+    .link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+    }
+    
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .divider-text {
+      padding: 0 10px;
+      color: #777;
+    }
+    
+    .google-btn {
+      background-color: #4285F4 !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .google-icon {
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+    }
+    
+    .checkbox-container {
+      margin: 15px 0;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .checkbox-container input {
+      width: auto;
+      margin-right: 10px;
+    }
+    
+    .password-hint {
+      font-size: 12px;
+      color: #666;
+      margin-top: -5px;
+      margin-bottom: 10px;
+    }
+
+    /* PÁGINA PÓS-LOGIN */
+    .post-login-page {
+      display: none;
+      margin: 0;
+      padding: 0;
+      background-color: #0f172a;
+      color: #f1f5f9;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .card {
+      background-color: #1e293b;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+
+    .post-login-page h1 {
+      color: #38bdf8;
+      margin-bottom: 20px;
+    }
+
+    .post-login-page p {
+      margin: 10px 0;
+      font-size: 1.1rem;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #38bdf8;
+      margin-bottom: 20px;
+    }
+
+    .emoji {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    /* ESTILOS DO PAINEL ADMIN */
+    .admin-panel {
+      display: none;
+      padding: 80px 20px 20px;
+      background-color: #f5f7fa;
+      min-height: 100vh;
+    }
+
+    .admin-panel h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+
+    .alert {
+      background-color: #e1f5fe;
+      color: #0277bd;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border-left: 5px solid #0288d1;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .admin-table th, .admin-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .admin-table th {
+      background-color: #3498db;
+      color: white;
+      font-weight: 600;
+    }
+
+    .admin-table tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .badge-new {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .admin-btn {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .admin-btn-danger {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .admin-btn-logout {
+      background-color: #6c757d;
+      color: white;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Barra superior -->
+  <div class="top-bar">
+    <h1>MARKET FX</h1>
+    <div class="language-selector">
+      <div class="language-emoji" onclick="toggleLanguageOptions()">🌐</div>
+      <div id="languageOptions" class="language-options">
+        <a href="#" onclick="changeLanguage('pt')">Português (PT)</a>
+        <a href="#" onclick="changeLanguage('en')">English (EN)</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÁGINA DE LOGIN -->
+  <div id="login-page" class="login-page">
+    <div class="container">
+      <div class="tabs">
+        <button id="login-tab" class="active" onclick="showForm('login')">Login</button>
+        <button id="register-tab" onclick="showForm('register')">Cadastro</button>
+      </div>
+
+      <!-- Formulário de Login -->
+      <div id="login-form">
+        <h2>Entrar na sua conta</h2>
+        <form id="login">
+          <input type="email" id="login-email" placeholder="Seu e-mail" required />
+          <input type="password" id="login-password" placeholder="Senha" required />
+          <button type="button" onclick="login()">Entrar</button>
+          
+          <div class="divider">
+            <span class="divider-text">ou</span>
+          </div>
+          
+          <button type="button" class="google-btn" onclick="loginWithGoogle()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" class="google-icon" alt="Google logo">
+            Entrar com Google
+          </button>
+        </form>
+      </div>
+
+      <!-- Formulário de Cadastro -->
+      <div id="register-form" style="display:none;">
+        <h2>Criar nova conta</h2>
+        <form id="register">
+          <input type="text" id="register-name" placeholder="Seu nome completo" required />
+          <input type="email" id="register-email" placeholder="Seu e-mail" required />
+          <input type="password" id="register-password" placeholder="Crie uma senha" required />
+          <p class="password-hint">A senha deve ter entre 8-15 caracteres, incluindo maiúsculas, minúsculas, números e caracteres especiais.</p>
+          <input type="password" id="register-confirm-password" placeholder="Confirme a senha" required />
+          
+          <div class="checkbox-container">
+            <input type="checkbox" id="tax-declaration" required />
+            <label for="tax-declaration">Declaro e confirmo que não sou cidadão ou residente dos EUA para fins fiscais.</label>
+          </div>
+          
+          <button type="button" onclick="register()">Cadastrar</button>
+        </form>
+      </div>
+
+      <div class="link">
+        <a href="#" onclick="showForm('login')">Já tem conta? Entrar</a>
+      </div>
+      <div id="message" class="message"></div>
+    </div>
+  </div>
+
+  <!-- PÁGINA PÓS-LOGIN -->
+  <div id="post-login-page" class="post-login-page">
+    <div class="card">
+      <div class="logo">MARKET FX</div>
+      <div class="emoji">⚙️</div>
+      <h1>Bem-vindo ao Sistema</h1>
+      <p id="user-greeting">Olá, Usuário!</p>
+      <p>Seu acesso foi autorizado com sucesso.</p>
+      <hr style="margin: 20px 0; border: none; border-top: 1px solid #334155;">
+      <button onclick="logout()" style="background: #dc3545; width: auto; padding: 8px 20px;">Sair</button>
+    </div>
+  </div>
+
+  <!-- PAINEL ADMIN -->
+  <div id="admin-panel" class="admin-panel">
+    <h1>👥 Painel Admin - Usuários Cadastrados</h1>
+    
+    <div class="alert">
+      <strong>Atenção Admin:</strong> Você está visualizando todos os usuários cadastrados.
+    </div>
+
+    <table id="users-table" class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Senha</th>
+          <th>Data de Cadastro</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dados serão preenchidos via JavaScript -->
+      </tbody>
+    </table>
+
+    <button class="admin-btn admin-btn-logout" onclick="adminLogout()">Sair do Painel Admin</button>
+  </div>
+
+  <script>
+    // Banco de dados SIMULADO (armazena usuários cadastrados)
+    let usersDatabase = JSON.parse(localStorage.getItem('marketfx_users')) || [];
+
+    // Usuário admin padrão
+    const adminUser = {
+      email: "myforexfx@gmail.com",
+      password: "myforexfx12#",
+      name: "Admin",
+      isAdmin: true
+    };
+
+    // Adiciona o admin ao banco de dados se não existir
+    if (!usersDatabase.some(u => u.email === adminUser.email)) {
+      usersDatabase.push(adminUser);
+      localStorage.setItem('marketfx_users', JSON.stringify(usersDatabase));
+    }
+
+    // Variáveis de tradução
+    const translations = {
+      pt: {
+        loginTab: "Login",
+        registerTab: "Cadastro",
+        loginTitle: "Entrar na sua conta",
+        emailPlaceholder: "Seu e-mail",
+        passwordPlaceholder: "Senha",
+        loginButton: "Entrar",
+        registerTitle: "Criar nova conta",
+        namePlaceholder: "Seu nome completo",
+        registerButton: "Cadastrar",
+        confirmPassword: "Confirme a senha",
+        passwordHint: "A senha deve ter entre 8-15 caracteres, incluindo maiúsculas, minúsculas, números e caracteres especiais.",
+        taxDeclaration: "Declaro e confirmo que não sou cidadão ou residente dos EUA para fins fiscais.",
+        alreadyAccount: "Já tem conta? Entrar",
+        or: "ou",
+        loginGoogle: "Entrar com Google",
+        welcome: "Bem-vindo ao Sistema",
+        hello: "Olá, Usuário!",
+        authorized: "Seu acesso foi autorizado com sucesso.",
+        logout: "Sair",
+        adminWelcome: "Painel Admin - Usuários Cadastrados",
+        adminAlert: "Atenção Admin: Você está visualizando todos os usuários cadastrados.",
+        deleteUser: "Excluir",
+        adminLogout: "Sair do Painel Admin"
+      },
+      en: {
+        loginTab: "Login",
+        registerTab: "Register",
+        loginTitle: "Sign in to your account",
+        emailPlaceholder: "Your email",
+        passwordPlaceholder: "Password",
+        loginButton: "Sign in",
+        registerTitle: "Create new account",
+        namePlaceholder: "Your full name",
+        registerButton: "Register",
+        confirmPassword: "Confirm password",
+        passwordHint: "Password must be 8-15 characters, including uppercase, lowercase, numbers and special characters.",
+        taxDeclaration: "I declare and confirm that I am not a US citizen or resident for tax purposes.",
+        alreadyAccount: "Already have an account? Sign in",
+        or: "or",
+        loginGoogle: "Sign in with Google",
+        welcome: "Welcome to the System",
+        hello: "Hello, User!",
+        authorized: "Your access has been successfully authorized.",
+        logout: "Logout",
+        adminWelcome: "Admin Panel - Registered Users",
+        adminAlert: "Admin Notice: You are viewing all registered users.",
+        deleteUser: "Delete",
+        adminLogout: "Logout Admin Panel"
+      }
+    };
+
+    // Idioma atual
+    let currentLanguage = 'pt';
+
+    // Função para mostrar/esconder opções de idioma
+    function toggleLanguageOptions() {
+      document.getElementById("languageOptions").classList.toggle("show");
+    }
+
+    // Fechar o dropdown se clicar fora dele
+    window.onclick = function(event) {
+      if (!event.target.matches('.language-emoji')) {
+        var dropdowns = document.getElementsByClassName("language-options");
+        for (var i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+
+    // Função para mudar o idioma
+    function changeLanguage(lang) {
+      currentLanguage = lang;
+      updateTexts();
+      document.getElementById("languageOptions").classList.remove("show");
+    }
+
+    // Função para atualizar todos os textos
+    function updateTexts() {
+      const t = translations[currentLanguage];
+      
+      // Atualiza textos da barra superior
+      document.getElementById('login-tab').textContent = t.loginTab;
+      document.getElementById('register-tab').textContent = t.registerTab;
+      
+      // Atualiza formulário de login
+      document.querySelector('#login-form h2').textContent = t.loginTitle;
+      document.getElementById('login-email').placeholder = t.emailPlaceholder;
+      document.getElementById('login-password').placeholder = t.passwordPlaceholder;
+      document.querySelector('#login-form button').textContent = t.loginButton;
+      document.querySelector('.divider-text').textContent = t.or;
+      document.querySelector('.google-btn').innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" class="google-icon" alt="Google logo"> ${t.loginGoogle}`;
+      
+      // Atualiza formulário de cadastro
+      document.querySelector('#register-form h2').textContent = t.registerTitle;
+      document.getElementById('register-name').placeholder = t.namePlaceholder;
+      document.getElementById('register-email').placeholder = t.emailPlaceholder;
+      document.getElementById('register-password').placeholder = t.passwordPlaceholder;
+      document.getElementById('register-confirm-password').placeholder = t.confirmPassword;
+      document.querySelector('.password-hint').textContent = t.passwordHint;
+      document.querySelector('.checkbox-container label').textContent = t.taxDeclaration;
+      document.querySelector('#register-form button').textContent = t.registerButton;
+      
+      // Atualiza link "Já tem conta"
+      document.querySelector('.link a').textContent = t.alreadyAccount;
+      
+      // Atualiza textos da página pós-login (se visível)
+      if (document.getElementById('post-login-page').style.display === 'flex') {
+        document.querySelector('.post-login-page h1').textContent = t.welcome;
+        document.getElementById('user-greeting').textContent = t.hello;
+        document.querySelector('.post-login-page p:nth-of-type(2)').textContent = t.authorized;
+        document.querySelector('.post-login-page button').textContent = t.logout;
+      }
+      
+      // Atualiza textos do painel admin (se visível)
+      if (document.getElementById('admin-panel').style.display === 'block') {
+        document.querySelector('.admin-panel h1').textContent = t.adminWelcome;
+        document.querySelector('.admin-panel .alert').innerHTML = `<strong>${t.adminAlert.split(':')[0]}:</strong> ${t.adminAlert.split(':')[1]}`;
+        document.querySelector('.admin-btn-logout').textContent = t.adminLogout;
+        
+        // Atualiza botões de ação na tabela
+        const deleteButtons = document.querySelectorAll('.admin-btn-danger');
+        deleteButtons.forEach(btn => {
+          btn.textContent = t.deleteUser;
+        });
+      }
+    }
+
+    // Alterna entre formulários
+    function showForm(type) {
+      const loginTab = document.getElementById('login-tab');
+      const registerTab = document.getElementById('register-tab');
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+      const message = document.getElementById('message');
+
+      if (type === 'login') {
+        loginTab.classList.add('active');
+        registerTab.classList.remove('active');
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+        message.innerHTML = '';
+      } else {
+        loginTab.classList.remove('active');
+        registerTab.classList.add('active');
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        message.innerHTML = '';
+      }
+    }
+
+    // Validação de senha forte
+    function isPasswordStrong(password) {
+      // Entre 8 e 15 caracteres
+      if (password.length < 8 || password.length > 15) {
+        return false;
+      }
+      
+      // Pelo menos uma letra maiúscula
+      if (!/[A-Z]/.test(password)) {
+        return false;
+      }
+      
+      // Pelo menos uma letra minúscula
+      if (!/[a-z]/.test(password)) {
+        return false;
+      }
+      
+      // Pelo menos um número
+      if (!/[0-9]/.test(password)) {
+        return false;
+      }
+      
+      // Pelo menos um caractere especial
+      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        return false;
+      }
+      
+      return true;
+    }
+
+    // Função de login
+    function login() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const message = document.getElementById('message');
+
+      if (!email || !password) {
+        message.innerHTML = currentLanguage === 'pt' 
+          ? "Por favor, preencha todos os campos!" 
+          : "Please fill in all fields!";
+        return;
+      }
+
+      // Verifica se o usuário existe
+      const user = usersDatabase.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        message.innerHTML = currentLanguage === 'pt' 
+          ? "Login bem-sucedido!" 
+          : "Login successful!";
+        message.classList.add('success-message');
+        
+        setTimeout(() => {
+          document.getElementById('login-page').style.display = 'none';
+          
+          if (user.isAdmin) {
+            // Mostra painel de admin
+            document.getElementById('admin-panel').style.display = 'block';
+            loadAdminPanel();
+          } else {
+            // Mostra página pós-login normal
+            document.getElementById('post-login-page').style.display = 'flex';
+            document.getElementById('user-greeting').textContent = currentLanguage === 'pt' 
+              ? `Olá, ${user.name.split(' ')[0]}!` 
+              : `Hello, ${user.name.split(' ')[0]}!`;
+          }
+        }, 1000);
+      } else {
+        message.innerHTML = currentLanguage === 'pt' 
+          ? "E-mail ou senha incorretos!" 
+          : "Incorrect email or password!";
+        message.classList.remove('success-message');
+      }
+    }
+
+    // Função de cadastro
+    function register() {
+      const name = document.getElementById('register-name').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      const confirmPassword = document.getElementById('register-confirm-password').value;
+      const declarationChecked = document.getElementById('tax-declaration').checked;
+      const message = document.getElementById('message');
+
+      // Validações
+      if (!name || !email || !password || !confirmPassword) {
+        message.innerHTML = currentLanguage === 'pt' 
+          ? "Por favor, preencha todos os campos!" 
+          : "Please fill in all fields!";
+        return;
+      }
+
+      if (!declarationChecked) {
+        message.innerHTML = currentLanguage === 'pt' 
+          ? "Você deve confirmar a declaração fiscal!" 
+          : "You must confirm the tax declaration!";
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        message.innerHTML = currentLanguage === 'pt' 
+          ? "As senhas não coincidem!" 
+          : "Passwords don't match!";
+        return;
+      }
+
+      if (!isPasswordStrong(password)) {
+        message.innerHTML = currentLanguage === 'pt' 
+          ? "A senha não atende aos requisitos de segurança!" 
+          : "Password does not meet security requirements!";
+        return;
+      }
+
+      // Verifica se email já está cadastrado
+      if (usersDatabase.some(u => u.email === email)) {
+        message.innerHTML = currentLanguage === 'pt' 
+          ? "Este e-mail já está cadastrado!" 
+          : "This email is already registered!";
+        return;
+      }
+
+      // Adiciona novo usuário ao banco de dados
+      const newUser = {
+        email, 
+        password: password, // Armazena a senha em texto puro (APENAS PARA DEMONSTRAÇÃO)
+        name,
+        registrationDate: new Date().toISOString()
+      };
+      
+      usersDatabase.push(newUser);
+      localStorage.setItem('marketfx_users', JSON.stringify(usersDatabase));
+      
+      message.innerHTML = currentLanguage === 'pt' 
+        ? `Cadastro realizado com sucesso, ${name.split(' ')[0]}!` 
+        : `Registration successful, ${name.split(' ')[0]}!`;
+      message.classList.add('success-message');
+      
+      // Limpa o formulário
+      setTimeout(() => {
+        document.getElementById('register').reset();
+        showForm('login');
+      }, 2000);
+    }
+
+    // Função de logout
+    function logout() {
+      document.getElementById('post-login-page').style.display = 'none';
+      document.getElementById('login-page').style.display = 'flex';
+      document.getElementById('login-email').value = '';
+      document.getElementById('login-password').value = '';
+    }
+
+    // Função de logout do admin
+    function adminLogout() {
+      document.getElementById('admin-panel').style.display = 'none';
+      document.getElementById('login-page').style.display = 'flex';
+      document.getElementById('login-email').value = '';
+      document.getElementById('login-password').value = '';
+    }
+
+    // Função para carregar o painel admin
+    function loadAdminPanel() {
+      // Recupera os usuários do localStorage
+      const allUsers = JSON.parse(localStorage.getItem('marketfx_users')) || [];
+      
+      // Filtra para mostrar apenas usuários não-admin
+      const normalUsers = allUsers.filter(user => !user.isAdmin);
+      
+      // Preenche a tabela
+      const tableBody = document.querySelector('#users-table tbody');
+      tableBody.innerHTML = ''; // Limpa a tabela
+      
+      normalUsers.forEach((user, index) => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${user.name || 'N/A'}</td>
+          <td>${user.email}</td>
+          <td>${user.password}</td>
+          <td>${new Date(user.registrationDate).toLocaleString()}</td>
+          <td>
+            <button class="admin-btn admin-btn-danger" onclick="deleteUser('${user.email}')">${translations[currentLanguage].deleteUser}</button>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Função para deletar usuário
+    function deleteUser(email) {
+      if (confirm(currentLanguage === 'pt' ? 'Tem certeza que deseja excluir este usuário?' : 'Are you sure you want to delete this user?')) {
+        let allUsers = JSON.parse(localStorage.getItem('marketfx_users')) || [];
+        allUsers = allUsers.filter(user => user.email !== email);
+        localStorage.setItem('marketfx_users', JSON.stringify(allUsers));
+        usersDatabase = allUsers;
+        
+        alert(currentLanguage === 'pt' ? 'Usuário excluído com sucesso!' : 'User deleted successfully!');
+        loadAdminPanel(); // Atualiza a tabela
+      }
+    }
+
+    // Função de login com Google (simulada)
+    function loginWithGoogle() {
+      const message = document.getElementById('message');
+      
+      // Simulação de login com Google
+      message.innerHTML = currentLanguage === 'pt' 
+        ? "Redirecionando para autenticação com Google..." 
+        : "Redirecting to Google authentication...";
+      
+      // Em um cenário real, aqui você integraria com a API do Google OAuth
+      setTimeout(() => {
+        const fakeGoogleUser = {
+          name: currentLanguage === 'pt' ? "Usuário Google" : "Google User",
+          email: "usuario.google@example.com",
+          password: "Google@123",
+          registrationDate: new Date().toISOString()
+        };
+        
+        // Verifica se o usuário já está cadastrado
+        let user = usersDatabase.find(u => u.email === fakeGoogleUser.email);
+        
+        if (!user) {
+          // Se não estiver cadastrado, cria um novo registro
+          usersDatabase.push(fakeGoogleUser);
+          localStorage.setItem('marketfx_users', JSON.stringify(usersDatabase));
+          user = usersDatabase.find(u => u.email === fakeGoogleUser.email);
+        }
+        
+        message.innerHTML = currentLanguage === 'pt' 
+          ? "Login com Google bem-sucedido!" 
+          : "Google login successful!";
+        message.classList.add('success-message');
+        
+        setTimeout(() => {
+          document.getElementById('login-page').style.display = 'none';
+          document.getElementById('post-login-page').style.display = 'flex';
+          document.getElementById('user-greeting').textContent = currentLanguage === 'pt' 
+            ? `Olá, ${user.name.split(' ')[0]}!` 
+            : `Hello, ${user.name.split(' ')[0]}!`;
+        }, 1000);
+      }, 1500);
+    }
+
+    // Inicializa textos no carregamento
+    window.onload = function() {
+      updateTexts();
+      
+      // Verifica se há um usuário logado (para desenvolvimento)
+      if (window.location.hash === '#admin') {
+        document.getElementById('login-page').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        loadAdminPanel();
+      }
+    };
+  </script>
+</body>
+</html>
